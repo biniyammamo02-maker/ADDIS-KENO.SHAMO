@@ -166,7 +166,8 @@
     </div>
 </div>
 <script>
-    const SERVER_URL = 'http://localhost:5000';
+   const SERVER_URL = "https://addis-keno-shamo-4.onrender.com";
+
 
     document.addEventListener("DOMContentLoaded", () => {
         loadAdminData();
@@ -184,7 +185,8 @@
             return;
         }
 
-        fetch(`${SERVER_URL}/admin/force-numbers`, {
+        fetch(`${const SERVER_URL = "https://addis-keno-shamo-4.onrender.com";
+}/admin/force-numbers`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ numbers: arr })
@@ -254,7 +256,8 @@
                 });
             });
 
-        fetch(`${SERVER_URL}/admin/withdrawals`)
+        fetch(`${const SERVER_URL = "https://addis-keno-shamo-4.onrender.com";
+}/admin/withdrawals`)
             .then(res => res.json())
             .then(withdrawals => {
                 const tbody = document.getElementById('withdrawals-table-body');
@@ -279,10 +282,12 @@
     }
 
     function processDeposit(id, action) {
-        fetch(`${SERVER_URL}/admin/process-deposit`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id, action }) }).then(res => res.json()).then(data => { if(data.success) { alert(`✅ ዲፖዚት ተከናውኗል!`); loadAdminData(); } });
+        fetch(`${const SERVER_URL = "https://addis-keno-shamo-4.onrender.com";
+}/admin/process-deposit`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id, action }) }).then(res => res.json()).then(data => { if(data.success) { alert(`✅ ዲፖዚት ተከናውኗል!`); loadAdminData(); } });
     }
     function processWithdrawal(id, action) {
-        fetch(`${SERVER_URL}/admin/process-withdrawal`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id, action }) }).then(res => res.json()).then(data => { if(data.success) { alert(`✅ ዊዝድሮው ተከናውኗል!`); loadAdminData(); } });
+        fetch(`${const SERVER_URL = "https://addis-keno-shamo-4.onrender.com";
+}/admin/process-withdrawal`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id, action }) }).then(res => res.json()).then(data => { if(data.success) { alert(`✅ ዊዝድሮው ተከናውኗል!`); loadAdminData(); } });
     }
 </script>
 </body>
