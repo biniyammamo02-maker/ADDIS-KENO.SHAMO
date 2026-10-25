@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="am">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashbet - Executive Admin Control Panel</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background-color: #0b111e; color: #ffffff; margin: 0; padding: 20px; }
+        .admin-container { max-width: 1100px; margin: 0 auto; background: #0f172a; padding: 25px; border-radius: 12px; border: 1px solid #1e293b; box-shadow: 0 4px 20px rgba(0,0,0,0.5); }
+        h2 { color: #ffcc00; margin-bottom: 20px; text-transform: uppercase; font-size: 22px; }
+        
+        .admin-tabs-nav { display: flex; gap: 10px; background: #1e293b; padding: 6px; border-radius: 8px; margin-bottom: 25px; border: 1px solid #334155; overflow-x: auto; }
+        .admin-tab-btn { flex: 1; padding: 12px; background: none; color: #94a3b8; border: none; font-weight: bold; font-size: 14px; cursor: pointer; border-radius: 6px; transition: 0.2s; text-transform: uppercase; white-space: nowrap; }
+        .admin-tab-btn:hover { background: #24344d; color: #fff; }
+        .admin-tab-btn.active { background: #ffcc00; color: #000; font-weight: bold; }
+        
+        .tab-content-panel { display: none; animation: fadeIn 0.3s ease-in-out; }
+        .tab-content-panel.active { display: block; }
+        
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px; margin-bottom: 20px; }
+        .stat-card { background: #151f32; padding: 20px; border-radius: 10px; text-align: center; border: 1px solid #24344d; }
+        .stat-card h4 { margin: 0; color: #94a3b8; font-size: 13px; text-transform: uppercase; }
+        .stat-card p { margin: 10px 0 0 0; font-size: 26px; font-weight: bold; color: #00ffcc; }
+        
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; background: #151f32; border-radius: 8px; overflow: hidden; border: 1px solid #24344d; }
+        th, td { padding: 14px 16px; text-align: left; border-bottom: 1px solid #24344d; font-size: 14px; vertical-align: middle; }
+        th { background: #1e293b; color: #ffcc00; font-weight: bold; }
+        tr:hover { background: #1d2a44; }
+        
+        .badge { padding: 5px 10px; border-radius: 4px; font-size: 11px; font-weight: bold; text-transform: uppercase; display: inline-block; }
+        .badge.pending { background: #ca8a04; color: #fff; }
+        .badge.approved { background: #16a34a; color: #fff; }
+        .badge.rejected { background: #dc2626; color: #fff; }
+        
+        .btn-action { padding: 8px 14px; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; font-size: 12px; margin-right: 5px; transition: 0.2s; text-transform: uppercase; }
+        .btn-approve { background: #10b981; color: #fff; }
+        .btn-approve:hover { background: #059669; }
+        .btn-reject { background: #ef4444; color: #fff; }
+        .btn-reject:hover { background: #dc2626; }
+        
+        .refresh-top-btn { background: #38bdf8; color: #000; padding: 10px 20px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; float: right; margin-top: -5px; }
+        .control-input { width: 100%; padding: 12px; font-size: 16px; border: 1px solid #334155; background: #151f32; color: #fff; border-radius: 8px; box-sizing: border-box; margin-bottom: 15px; }
+        
+        .table-screenshot-preview { width: 45px; height: 45px; object-fit: cover; border-radius: 6px; border: 1px solid #ffcc00; cursor: pointer; transition: 0.2s; background: #0f172a; display: flex; align-items: center; justify-content: center; font-size: 18px; }
+        .screenshot-popup-modal { display: none; position: fixed; z-index: 100000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0, 0, 0, 0.85); backdrop-filter: blur(5px); justify-content: center; align-items: center; }
+        .popup-modal-content { position: relative; background-color: #1e293b; margin: auto; padding: 10px; border: 2px solid #ffcc00; width: 90%; max-width: 500px; border-radius: 12px; box-shadow: 0 5px 30px rgba(0,0,0,0.7); }
+        .popup-modal-close-btn { position: absolute; top: -15px; right: -15px; background: #ef4444; color: white; width: 32px; height: 32px; border-radius: 50%; font-size: 20px; font-weight: bold; border: 2px solid #fff; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        .popup-large-img { width: 100%; height: auto; max-height: 70vh; object-fit: contain; border-radius: 6px; display: block; }
+        
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+<div class="admin-container">
+    <button class="refresh-top-btn" onclick="loadAdminData()">🔄 REFRESH DATA</button>
+    <h2>💼 DASHBET EXECUTIVE CONTROL PANEL</h2>
+    
+    <div class="admin-tabs-nav">
+        <button id="nav-dash" class="admin-tab-btn active" onclick="switchAdminTab('dashboard')">📊 Dashboard</button>
+        <button id="nav-dep" class="admin-tab-btn" onclick="switchAdminTab('deposit')">📷 Deposits</button>
+        <button id="nav-with" class="admin-tab-btn" onclick="switchAdminTab('withdraw')">💸 Withdraws</button>
+        <button id="nav-users" class="admin-tab-btn" onclick="switchAdminTab('users')">👥 Users</button>
+        <button id="nav-ctrl" class="admin-tab-btn" style="color: #ff0055;" onclick="switchAdminTab('control')">🎯 Live Control</button>
+    </div>
+
+    <!-- 1. DASHBOARD -->
+    <div id="panel-dashboard" class="tab-content-panel active">
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h4>ጠቅላላ የተጠቃሚዎች ካፒታል</h4>
+                <p id="stat-capital" style="color: #00ff00;">0.00 ETB</p>
+            </div>
+            <div class="stat-card">
+                <h4>ጠቅላላ ተጠቃሚዎች</h4>
+                <p id="stat-users">0</p>
+            </div>
+            <div class="stat-card">
+                <h4>የሚጠባበቁ ዲፖዚቶች</h4>
+                <p id="stat-deposits" style="color: #ffcc00;">0</p>
+            </div>
+            <div class="stat-card">
+                <h4>የሚጠባበቁ ዊዝድሮዎች</h4>
+                <p id="stat-withdrawals" style="color: #ef4444;">0</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. DEPOSITS -->
+    <div id="panel-deposit" class="tab-content-panel">
+        <div style="overflow-x: auto;">
+            <table>
+                <thead>
+                    <tr>
+                        <th>የጥያቄ ID</th>
+                        <th>የተጫዋች ስልክ</th>
+                        <th>ስክሪንሾት (Receipt)</th>
+                        <th>የላከበት ስልክ</th>
+                        <th>የክክፈያ ዘዴ</th>
+                        <th>የብር መጠን</th>
+                        <th>ሁኔታ (Status)</th>
+                        <th>እርምጃ (Actions)</th>
+                    </tr>
+                </thead>
+                <tbody id="deposits-table-body"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- 3. WITHDRAWS -->
+    <div id="panel-withdraw" class="tab-content-panel">
+        <div style="overflow-x: auto;">
+            <table>
+                <thead>
+                    <tr>
+                        <th>የጥያቄ ID</th>
+                        <th>የተጫዋች ስልክ</th>
+                        <th>የአካውንት ቁጥር</th>
+                        <th>ሙሉ ስም</th>
+                        <th>የክክፈያ ዘዴ</th>
+                        <th>የብር መጠን</th>
+                        <th>ሁኔታ (Status)</th>
+                        <th>እርምጃ (Actions)</th>
+                    </tr>
+                </thead>
+                <tbody id="withdrawals-table-body"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- 4. USERS -->
+    <div id="panel-users" class="tab-content-panel">
+        <div style="overflow-x: auto;">
+            <table>
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>የተጠቃሚ ስልክ ቁጥር</th>
+                        <th>የይለፍ ቃል (Password)</th>
+                        <th>ወቅታዊ ቀሪ ሂሳብ (Current Balance)</th>
+                    </tr>
+                </thead>
+                <tbody id="users-table-body"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- 5. 🎯 ሚስጥራዊ የቁጥጥር ፎርም (Live Control Panel) -->
+    <div id="panel-control" class="tab-content-panel">
+        <div style="background: #1e293b; padding: 20px; border-radius: 10px; border: 1px solid #ff0055;">
+            <h3 style="color: #ff0055; margin-top:0;">🎯 የዕጣ ቁጥሮች አስገዳጅ ሞተር (Rigging Dashboard)</h3>
+            <p style="color: #94a3b8; font-size: 14px;">በሚቀጥለው ዙር እንዲወጡ የምትፈልጋቸውን በትክክል 20 ቁጥሮች በኮማ ለይተህ አስገባቸው (ከ1 እስከ 80 ቁጥሮች ብቻ)።</p>
+            <input type="text" id="forced-numbers-input" class="control-input" placeholder="ምሳሌ፡ 5,12,18,22,25,30,34,41,45,49,52,56,60,63,67,71,74,77,79,80">
+            <div style="display: flex; gap: 10px;">
+                <button onclick="submitForcedNumbers()" style="background: #ff0055; color: white; padding: 12px; font-weight: bold; border-radius: 6px; border: none; cursor: pointer; flex: 2;">🎯 FORCE THESE 20 NUMBERS</button>
+                <button onclick="resetForcedNumbers()" style="background: #64748b; color: white; padding: 12px; font-weight: bold; border-radius: 6px; border: none; cursor: pointer; flex: 1;">🔄 RESET TO RANDOM</button>
+            </div>
+            <div id="control-status-msg" style="margin-top: 15px; font-weight: bold; color: #00ffcc;"></div>
+        </div>
+    </div>
+</div>
+
+<div id="screenshotPopupModal" class="screenshot-popup-modal" onclick="closeLargeScreenshotModal(event)">
+    <div class="popup-modal-content" onclick="event.stopPropagation()">
+        <button class="popup-modal-close-btn" onclick="document.getElementById('screenshotPopupModal').style.display='none'">×</button>
+        <img id="popupLargeImageElement" class="popup-large-img" src="" alt="Deposit Receipt">
+    </div>
+</div>
+<script>
+    const SERVER_URL = 'http://localhost:5000';
+
+    document.addEventListener("DOMContentLoaded", () => {
+        loadAdminData();
+        setInterval(loadAdminData, 4000);
+    });
+
+    // 🎯 ማሻሻያ 3፦ አስገዳጅ ቁጥሮችን ወደ ሰርቨር መላኪያ ፈንክሽን
+    function submitForcedNumbers() {
+        const inputVal = document.getElementById('forced-numbers-input').value.trim();
+        if(!inputVal) { alert("እባክዎ ቁጥሮችን ያስገቡ!"); return; }
+        
+        const arr = inputVal.split(',').map(n => n.trim()).filter(n => n !== "");
+        if(arr.length !== 20) {
+            alert(`⚠️ ስህተት፡ በትክክል 20 ቁጥሮች መሆን አለባቸው! አሁን ያስገቡት፡ ${arr.length} ቁጥሮች ብቻ ነው።`);
+            return;
+        }
+
+        fetch(`${SERVER_URL}/admin/force-numbers`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ numbers: arr })
+        })
+        .then(res => res.json())
+        .then(data => {
+            document.getElementById('control-status-msg').innerText = data.message;
+            alert(data.message);
+        });
+    }
+
+    function resetForcedNumbers() {
+        fetch(`${SERVER_URL}/admin/force-numbers`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ numbers: null })
+        })
+        .then(res => res.json())
+        .then(data => {
+            document.getElementById('forced-numbers-input').value = "";
+            document.getElementById('control-status-msg').innerText = data.message;
+            alert(data.message);
+        });
+    }
+
+    function openLargeScreenshotModal(imgSrc) {
+        if(!imgSrc || imgSrc === "") return;
+        document.getElementById('popupLargeImageElement').src = imgSrc;
+        document.getElementById('screenshotPopupModal').style.display = 'flex';
+    }
+
+    function closeLargeScreenshotModal(event) {
+        document.getElementById('screenshotPopupModal').style.display = 'none';
+    }
+
+    function switchAdminTab(tabName) {
+        document.querySelectorAll('.tab-content-panel').forEach(p => p.classList.remove('active'));
+        document.querySelectorAll('.admin-tab-btn').forEach(b => b.classList.remove('active'));
+        
+        document.getElementById(`panel-${tabName}`).classList.add('active');
+        if (tabName === 'dashboard') document.getElementById('nav-dash').classList.add('active');
+        if (tabName === 'deposit') document.getElementById('nav-dep').classList.add('active');
+        if (tabName === 'withdraw') document.getElementById('nav-with').classList.add('active');
+        if (tabName === 'users') document.getElementById('nav-users').classList.add('active');
+        if (tabName === 'control') document.getElementById('nav-ctrl').classList.add('active');
+    }
+
+    function loadAdminData() {
+        fetch(`${SERVER_URL}/admin/stats`)
+            .then(res => res.json())
+            .then(data => {
+                document.getElementById('stat-users').innerText = data.totalUsers;
+                document.getElementById('stat-deposits').innerText = data.pendingDeposits;
+                document.getElementById('stat-withdrawals').innerText = data.pendingWithdrawals;
+                document.getElementById('stat-capital').innerText = parseFloat(data.totalCapital).toFixed(2) + " ETB";
+            }).catch(err => console.log("ኮኔክሽን በመፈለግ ላይ..."));
+
+        fetch(`${SERVER_URL}/admin/deposits`)
+            .then(res => res.json())
+            .then(deposits => {
+                const tbody = document.getElementById('deposits-table-body');
+                if(deposits.length === 0) { tbody.innerHTML = '<tr><td colspan="8" style="text-align:center; color:#64748b;">ምንም ጥያቄ የለም።</td></tr>'; return; }
+                tbody.innerHTML = '';
+                deposits.forEach(req => {
+                    let actionButtons = req.status === 'PENDING' ? `<button class="btn-action btn-approve" onclick="processDeposit('${req.id}', 'APPROVE')">APPROVE</button><button class="btn-action btn-reject" onclick="processDeposit('${req.id}', 'REJECT')">REJECT</button>` : '---';
+                    tbody.innerHTML += `<tr><td>${req.id}</td><td><b>${req.userPhone}</b></td><td><div class="table-screenshot-preview" onclick="openLargeScreenshotModal('${req.screenshot || ''}')">${req.screenshot ? `<img src="\${req.screenshot}" style="width:100%; height:100%; object-fit:cover; border-radius:4px;">` : '📷'}</div></td><td>${req.senderPhone || '---'}</td><td><span style="color:#ffcc00;">${req.method}</span></td><td style="color:#00ff00; font-weight:bold;">${parseFloat(req.amount).toFixed(2)} ETB</td><td><span class="badge ${req.status.toLowerCase()}">${req.status}</span></td><td>${actionButtons}</td></tr>`;
+                });
+            });
+
+        fetch(`${SERVER_URL}/admin/withdrawals`)
+            .then(res => res.json())
+            .then(withdrawals => {
+                const tbody = document.getElementById('withdrawals-table-body');
+                if(withdrawals.length === 0) { tbody.innerHTML = '<tr><td colspan="8" style="text-align:center; color:#64748b;">ምንም ጥያቄ የለም።</td></tr>'; return; }
+                tbody.innerHTML = '';
+                withdrawals.forEach(req => {
+                    let actionButtons = req.status === 'PENDING' ? `<button class="btn-action btn-approve" onclick="processWithdrawal('${req.id}', 'APPROVE')">APPROVE</button><button class="btn-action btn-reject" onclick="processWithdrawal('${req.id}', 'REJECT')">REJECT</button>` : '---';
+                    tbody.innerHTML += `<tr><td>${req.id}</td><td><b>${req.userPhone}</b></td><td>${req.accountNumber}</td><td>${req.fullName}</td><td><span style="color:#38bdf8;">${req.method}</span></td><td style="color:#ef4444; font-weight:bold;">${parseFloat(req.amount).toFixed(2)} ETB</td><td><span class="badge ${req.status.toLowerCase()}">${req.status}</span></td><td>${actionButtons}</td></tr>`;
+                });
+            });
+
+        fetch(`${SERVER_URL}/admin/users`)
+            .then(res => res.json())
+            .then(users => {
+                const tbody = document.getElementById('users-table-body');
+                if(users.length === 0) { tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; color:#64748b;">ምንም ተጠቃሚ የለም።</td></tr>'; return; }
+                tbody.innerHTML = '';
+                users.forEach((u, index) => {
+                    tbody.innerHTML += `<tr><td>${index + 1}</td><td><b>${u.phone}</b></td><td><span style="color: #94a3b8; font-family: monospace;">${u.password || '123'}</span></td><td style="color:#00ffcc; font-weight:bold;">${parseFloat(u.balance).toFixed(2)} ETB</td></tr>`;
+                });
+            });
+    }
+
+    function processDeposit(id, action) {
+        fetch(`${SERVER_URL}/admin/process-deposit`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id, action }) }).then(res => res.json()).then(data => { if(data.success) { alert(`✅ ዲፖዚት ተከናውኗል!`); loadAdminData(); } });
+    }
+    function processWithdrawal(id, action) {
+        fetch(`${SERVER_URL}/admin/process-withdrawal`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id, action }) }).then(res => res.json()).then(data => { if(data.success) { alert(`✅ ዊዝድሮው ተከናውኗል!`); loadAdminData(); } });
+    }
+</script>
+</body>
+</html>
