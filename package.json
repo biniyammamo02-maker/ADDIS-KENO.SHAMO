@@ -1,0 +1,12 @@
+{
+  "name": "addis-keno-shamo",
+  "version": "1.0.0",
+  "description": "My Node.js Game",
+  "main": "admin_server.js",
+  "scripts": {
+    "start": "node admin_server.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2"
+  }
+}
