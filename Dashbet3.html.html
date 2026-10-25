@@ -194,7 +194,8 @@
     </div>
 </div>
 <script>
-const SERVER_URL = window.location.origin; 
+const const SERVER_URL = "https://addis-keno-shamo-4.onrender.com";
+ = window.location.origin; 
 let globalScreenshotBase64 = ""; 
 let balanceInterval = null; 
 
@@ -253,7 +254,8 @@ function fetchLiveBalanceFromServer() {
 }
 
 function loadDrawHistoryFromServer() {
-    fetch(`${SERVER_URL}/api/draw-history`)
+    fetch(`${const SERVER_URL = "https://addis-keno-shamo-4.onrender.com";
+}/api/draw-history`)
         .then(res => res.json())
         .then(history => {
             const ExtresultsMasterContainer = document.getElementById('results-master-history-container');
@@ -280,7 +282,8 @@ function loginUser() {
     const phoneInput = document.getElementById('login-phone').value; 
     const passwordInput = document.getElementById('login-password').value;
     if (!phoneInput || !passwordInput) { alert("⚠️ እባክዎ ስልክ ቁጥር እና የይለፍ ቃል ያስገቡ!"); return; }
-    fetch(`${SERVER_URL}/login`, { 
+    fetch(`${const SERVER_URL = "https://addis-keno-shamo-4.onrender.com";
+}/login`, { 
         method: 'POST', 
         headers: { 'Content-Type': 'application/json' }, 
         body: JSON.stringify({ phone: phoneInput, password: passwordInput }) 
@@ -304,7 +307,8 @@ function registerUser() {
     const phoneInput = document.getElementById('register-phone').value; 
     const passwordInput = document.getElementById('register-password').value;
     if (!phoneInput || !passwordInput) { alert("⚠️ እባክዎ ምዝገባውን ለመጨረስ ስልክ ቁጥር እና የይለፍ ቃል ይፍጠሩ!"); return; }
-    fetch(`${SERVER_URL}/register`, { 
+    fetch(`${const SERVER_URL = "https://addis-keno-shamo-4.onrender.com";
+}/register`, { 
         method: 'POST', 
         headers: { 'Content-Type': 'application/json' }, 
         body: JSON.stringify({ phone: phoneInput, password: passwordInput }) 
@@ -353,7 +357,8 @@ function submitWithdraw() {
     const userPhone = document.getElementById('user-phone-display').innerText;
     if(!amount || !accountNumber || !fullName) { alert("⚠️ እባክዎ ሁሉንም ፎርሞች በትክክል ይሙሉ!"); return; }
     
-    fetch(`${SERVER_URL}/api/withdraw`, { 
+    fetch(`${Sconst SERVER_URL = "https://addis-keno-shamo-4.onrender.com";
+}/api/withdraw`, { 
         method: 'POST', 
         headers: { 'Content-Type': 'application/json' }, 
         body: JSON.stringify({ userPhone, amount, accountNumber, fullName, method }) 
@@ -556,7 +561,8 @@ function renderStatisticsToUI() {
     if(!container) return;
     container.innerHTML = '<div style="color:#94a3b8; font-size:12px;">📈 ባለፉት 24 ሰዓታት የቁጥሮች ታሪክ በመተንተን ላይ...</div>';
     
-    fetch(`${SERVER_URL}/api/draw-history`)
+    fetch(`${const SERVER_URL = "https://addis-keno-shamo-4.onrender.com";
+}/api/draw-history`)
         .then(res => res.json())
         .then(history => {
             container.innerHTML = '';
